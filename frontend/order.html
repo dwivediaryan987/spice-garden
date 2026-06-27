@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Order delicious food online from Spice Garden. Fast delivery, secure payments via Razorpay.">
+  <title>Order Online | Spice Garden</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-logo">
+        <span class="nav-logo-icon">🌿</span>
+        <span class="nav-logo-text">Spice <span>Garden</span></span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/" class="nav-link">Home</a></li>
+        <li><a href="/menu.html" class="nav-link">Menu</a></li>
+        <li><a href="/order.html" class="nav-link active">Order Online</a></li>
+        <li><a href="/reservation.html" class="nav-link">Book Table</a></li>
+        <li><a href="/about.html" class="nav-link">About</a></li>
+        <li><a href="/contact.html" class="nav-link">Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="/order.html" class="nav-cart" id="cartIcon">🛒<span class="cart-count" id="cartCount">0</span></a>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="container">
+      <span class="section-subtitle">Craving Something?</span>
+      <h1 class="section-title">Order Online</h1>
+      <p class="section-desc">Fresh food delivered to your doorstep — hot, fast, and delicious</p>
+    </div>
+  </div>
+
+  <!-- Order Section -->
+  <section class="section">
+    <div class="container">
+      <div class="order-grid" id="orderContent">
+        <!-- Customer Details Form -->
+        <div>
+          <h2 style="font-family: var(--font-heading); margin-bottom: 25px; font-size: 1.5rem;">Your Details</h2>
+          <form id="orderForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Full Name *</label>
+                <input type="text" class="form-input" id="customerName" placeholder="Your name" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone Number *</label>
+                <input type="tel" class="form-input" id="customerPhone" placeholder="+91 98765 43210" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-input" id="customerEmail" placeholder="you@email.com">
+            </div>
+
+            <!-- Order Type Toggle -->
+            <div class="form-group">
+              <label class="form-label">Order Type *</label>
+              <div style="display: flex; gap: 10px;">
+                <button type="button" class="menu-tab active" id="deliveryBtn" onclick="setOrderType('delivery')">🛵 Delivery</button>
+                <button type="button" class="menu-tab" id="takeawayBtn" onclick="setOrderType('takeaway')">🏪 Takeaway</button>
+              </div>
+            </div>
+
+            <div class="form-group" id="addressGroup">
+              <label class="form-label">Delivery Address *</label>
+              <textarea class="form-input" id="deliveryAddress" placeholder="Your full delivery address..." rows="3"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; justify-content: center;" id="payBtn">
+              🔒 Proceed to Pay
+            </button>
+          </form>
+        </div>
+
+        <!-- Order Summary -->
+        <div>
+          <div class="order-summary-card">
+            <h3 style="font-family: var(--font-heading); margin-bottom: 20px; font-size: 1.3rem;">🛒 Order Summary</h3>
+            <div id="orderItems">
+              <!-- Cart items rendered here -->
+            </div>
+            <div id="orderTotals" style="margin-top: 15px;">
+              <!-- Totals rendered here -->
+            </div>
+            <div style="margin-top: 15px; text-align: center;">
+              <a href="/menu.html" class="btn btn-outline btn-sm" style="font-size: 0.8rem;">+ Add More Items</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty Cart State -->
+      <div id="emptyCartState" style="display: none; text-align: center; padding: 60px 20px;">
+        <div style="font-size: 4rem; margin-bottom: 15px;">🛒</div>
+        <h2 style="font-family: var(--font-heading); margin-bottom: 10px;">Your Cart is Empty</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 25px;">Explore our menu and add some delicious dishes!</p>
+        <a href="/menu.html" class="btn btn-primary">Browse Menu</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Success Modal -->
+  <div class="modal-overlay" id="successModal">
+    <div class="modal">
+      <span class="modal-icon">🎉</span>
+      <h3>Order Placed Successfully!</h3>
+      <p id="orderSuccessMsg">Your order #SG01001 has been placed. We'll start preparing it right away!</p>
+      <a href="/" class="btn btn-primary">Back to Home</a>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">
+    <span class="toast-icon">✅</span>
+    <span class="toast-message" id="toastMessage"></span>
+  </div>
+
+  <script src="js/main.js"></script>
+  <script src="js/order.js"></script>
+</body>
+</html>

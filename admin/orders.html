@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orders | Spice Garden Admin</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-logo"><span>🌿</span><span>Spice Garden</span></div>
+      <nav class="sidebar-nav">
+        <a href="/admin/dashboard.html" class="sidebar-link" data-page="dashboard"><span class="icon">📊</span> Dashboard</a>
+        <a href="/admin/menu-manage.html" class="sidebar-link" data-page="menu"><span class="icon">🍽️</span> Menu Items</a>
+        <a href="/admin/orders.html" class="sidebar-link" data-page="orders"><span class="icon">📦</span> Orders</a>
+        <a href="/admin/reservations.html" class="sidebar-link" data-page="reservations"><span class="icon">📅</span> Reservations</a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-user"><div class="sidebar-user-avatar">A</div><div><div class="sidebar-user-name" id="sidebarUserName">Admin</div><div class="sidebar-user-role">Administrator</div></div></div>
+        <button id="logoutBtn">🚪 Logout</button>
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-header">
+        <h1>📦 Order Management</h1>
+        <div style="display: flex; gap: 10px;">
+          <select class="status-select" id="orderFilter" onchange="filterOrders()">
+            <option value="">All Orders</option>
+            <option value="received">Received</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="preparing">Preparing</option>
+            <option value="ready">Ready</option>
+            <option value="delivered">Delivered</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Order #</th>
+              <th>Customer</th>
+              <th>Phone</th>
+              <th>Items</th>
+              <th>Total</th>
+              <th>Type</th>
+              <th>Payment</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="ordersTableBody">
+            <tr><td colspan="9" class="admin-empty"><span class="admin-empty-icon">📦</span>Loading orders...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    if (!checkAuth()) throw new Error('Not authenticated');
+    initSidebar('orders');
+
+    let allOrders = [];
+
+    async function loadOrders() {
+      try {
+        const data = await adminApi('/orders');
+        if (data.success) {
+          allOrders = data.data;
+          renderOrders(allOrders);
+        }
+      } catch (e) {
+        document.getElementById('ordersTableBody').innerHTML = '<tr><td colspan="9" class="admin-empty">Failed to load orders</td></tr>';
+      }
+    }
+
+    function renderOrders(orders) {
+      const tbody = document.getElementById('ordersTableBody');
+      if (orders.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" class="admin-empty"><span class="admin-empty-icon">📦</span>No orders found</td></tr>';
+        return;
+      }
+      tbody.innerHTML = orders.map(order => `
+        <tr>
+          <td><strong>${order.orderNumber || '—'}</strong></td>
+          <td>${order.customerName}</td>
+          <td>${order.customerPhone}</td>
+          <td title="${order.items.map(i => i.name + ' x' + i.quantity).join(', ')}">${order.items.length} items</td>
+          <td>₹${order.totalAmount}</td>
+          <td>${order.orderType === 'delivery' ? '🛵' : '🏪'} ${order.orderType}</td>
+          <td><span class="status-badge ${order.paymentStatus}">${order.paymentStatus}</span></td>
+          <td>
+            <select class="status-select" onchange="updateOrderStatus('${order._id}', this.value)">
+              <option value="received" ${order.orderStatus === 'received' ? 'selected' : ''}>Received</option>
+              <option value="confirmed" ${order.orderStatus === 'confirmed' ? 'selected' : ''}>Confirmed</option>
+              <option value="preparing" ${order.orderStatus === 'preparing' ? 'selected' : ''}>Preparing</option>
+              <option value="ready" ${order.orderStatus === 'ready' ? 'selected' : ''}>Ready</option>
+              <option value="out_for_delivery" ${order.orderStatus === 'out_for_delivery' ? 'selected' : ''}>Out for Delivery</option>
+              <option value="delivered" ${order.orderStatus === 'delivered' ? 'selected' : ''}>Delivered</option>
+              <option value="cancelled" ${order.orderStatus === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+            </select>
+          </td>
+          <td style="font-size: 0.8rem;">${formatDate(order.createdAt)}<br>${formatTime(order.createdAt)}</td>
+        </tr>
+      `).join('');
+    }
+
+    function filterOrders() {
+      const status = document.getElementById('orderFilter').value;
+      const filtered = status ? allOrders.filter(o => o.orderStatus === status) : allOrders;
+      renderOrders(filtered);
+    }
+
+    async function updateOrderStatus(id, status) {
+      try {
+        await adminApi(`/orders/${id}`, {
+          method: 'PUT',
+          body: JSON.stringify({ orderStatus: status })
+        });
+      } catch (e) {
+        alert('Failed to update: ' + e.message);
+        loadOrders();
+      }
+    }
+
+    loadOrders();
+  </script>
+</body>
+</html>

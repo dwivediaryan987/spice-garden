@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Explore our full menu — North Indian, South Indian, Chinese, Continental, Beverages & Desserts. Something for every palate!">
+  <title>Menu | Spice Garden</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-logo">
+        <span class="nav-logo-icon">🌿</span>
+        <span class="nav-logo-text">Spice <span>Garden</span></span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/" class="nav-link">Home</a></li>
+        <li><a href="/menu.html" class="nav-link active">Menu</a></li>
+        <li><a href="/order.html" class="nav-link">Order Online</a></li>
+        <li><a href="/reservation.html" class="nav-link">Book Table</a></li>
+        <li><a href="/about.html" class="nav-link">About</a></li>
+        <li><a href="/contact.html" class="nav-link">Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="/order.html" class="nav-cart" id="cartIcon">🛒<span class="cart-count" id="cartCount">0</span></a>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="container">
+      <span class="section-subtitle">Explore Our Flavours</span>
+      <h1 class="section-title">Our Menu</h1>
+      <p class="section-desc">Handcrafted dishes from 7 cuisines — every plate a masterpiece</p>
+    </div>
+  </div>
+
+  <!-- Menu Section -->
+  <section class="section">
+    <div class="container">
+      <!-- Search -->
+      <div style="max-width: 500px; margin: 0 auto 30px;">
+        <input type="text" class="form-input" id="menuSearch" placeholder="🔍 Search dishes..." style="text-align: center;">
+      </div>
+
+      <!-- Category Tabs -->
+      <div class="menu-tabs" id="menuTabs">
+        <button class="menu-tab active" data-category="all">All</button>
+        <button class="menu-tab" data-category="North Indian">🍛 North Indian</button>
+        <button class="menu-tab" data-category="South Indian">🥘 South Indian</button>
+        <button class="menu-tab" data-category="Chinese">🥡 Chinese</button>
+        <button class="menu-tab" data-category="Continental">🍝 Continental</button>
+        <button class="menu-tab" data-category="Starters">🍢 Starters</button>
+        <button class="menu-tab" data-category="Beverages">🥤 Beverages</button>
+        <button class="menu-tab" data-category="Desserts">🍨 Desserts</button>
+      </div>
+
+      <!-- Filter Buttons -->
+      <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap;">
+        <button class="menu-tab" id="vegFilter" data-filter="veg">🟢 Veg Only</button>
+        <button class="menu-tab" id="nonVegFilter" data-filter="nonveg">🔴 Non-Veg Only</button>
+      </div>
+
+      <!-- Menu Grid -->
+      <div class="menu-grid" id="menuGrid">
+        <div class="spinner"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <span>© 2024 Spice Garden. All rights reserved.</span>
+        <span>Made with 🧡 in India</span>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast">
+    <span class="toast-icon">✅</span>
+    <span class="toast-message" id="toastMessage">Item added to cart!</span>
+  </div>
+
+  <script src="js/main.js"></script>
+  <script src="js/menu.js"></script>
+</body>
+</html>

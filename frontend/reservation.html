@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Book a table at Spice Garden for an unforgettable dining experience. Easy online reservation.">
+  <title>Book a Table | Spice Garden</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+</head>
+<body>
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-logo"><span class="nav-logo-icon">🌿</span><span class="nav-logo-text">Spice <span>Garden</span></span></a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/" class="nav-link">Home</a></li>
+        <li><a href="/menu.html" class="nav-link">Menu</a></li>
+        <li><a href="/order.html" class="nav-link">Order Online</a></li>
+        <li><a href="/reservation.html" class="nav-link active">Book Table</a></li>
+        <li><a href="/about.html" class="nav-link">About</a></li>
+        <li><a href="/contact.html" class="nav-link">Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="/order.html" class="nav-cart" id="cartIcon">🛒<span class="cart-count" id="cartCount">0</span></a>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <div class="container">
+      <span class="section-subtitle">Reserve Your Spot</span>
+      <h1 class="section-title">Book a Table</h1>
+      <p class="section-desc">Secure your perfect evening with just a few clicks</p>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="reservation-form-wrapper animate-on-scroll">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <span style="font-size: 3rem;">🍽️</span>
+          <h2 style="font-family: var(--font-heading); margin-top: 10px; font-size: 1.5rem;">Make a Reservation</h2>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">Fill in the details below and we'll confirm your booking</p>
+        </div>
+
+        <form id="reservationForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Full Name *</label>
+              <input type="text" class="form-input" id="resName" placeholder="Your name" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone Number *</label>
+              <input type="tel" class="form-input" id="resPhone" placeholder="+91 98765 43210" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" id="resEmail" placeholder="you@email.com">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Date *</label>
+              <input type="date" class="form-input" id="resDate" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Time *</label>
+              <select class="form-input" id="resTime" required>
+                <option value="">Select time</option>
+                <option value="11:00 AM">11:00 AM</option>
+                <option value="11:30 AM">11:30 AM</option>
+                <option value="12:00 PM">12:00 PM</option>
+                <option value="12:30 PM">12:30 PM</option>
+                <option value="01:00 PM">01:00 PM</option>
+                <option value="01:30 PM">01:30 PM</option>
+                <option value="02:00 PM">02:00 PM</option>
+                <option value="07:00 PM">07:00 PM</option>
+                <option value="07:30 PM">07:30 PM</option>
+                <option value="08:00 PM">08:00 PM</option>
+                <option value="08:30 PM">08:30 PM</option>
+                <option value="09:00 PM">09:00 PM</option>
+                <option value="09:30 PM">09:30 PM</option>
+                <option value="10:00 PM">10:00 PM</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Number of Guests *</label>
+            <select class="form-input" id="resGuests" required>
+              <option value="">Select guests</option>
+              <option value="1">1 Guest</option>
+              <option value="2">2 Guests</option>
+              <option value="3">3 Guests</option>
+              <option value="4">4 Guests</option>
+              <option value="5">5 Guests</option>
+              <option value="6">6 Guests</option>
+              <option value="8">8 Guests</option>
+              <option value="10">10 Guests</option>
+              <option value="15">15 Guests</option>
+              <option value="20">20 Guests (Private Dining)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Special Requests</label>
+            <textarea class="form-input" id="resRequest" placeholder="Birthday celebration, dietary restrictions, preferred seating..." rows="3"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-gold btn-lg" style="width: 100%; justify-content: center;" id="resSubmitBtn">
+            📅 Confirm Reservation
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Success Modal -->
+  <div class="modal-overlay" id="successModal">
+    <div class="modal">
+      <span class="modal-icon">🎉</span>
+      <h3>Reservation Confirmed!</h3>
+      <p id="resSuccessMsg">Your table has been reserved. We'll send a confirmation to your phone.</p>
+      <a href="/" class="btn btn-primary">Back to Home</a>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <span>© 2024 Spice Garden. All rights reserved.</span>
+        <span>Made with 🧡 in India</span>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast"><span class="toast-icon">✅</span><span class="toast-message" id="toastMessage"></span></div>
+
+  <script src="js/main.js"></script>
+  <script>
+    // Set minimum date to today
+    document.addEventListener('DOMContentLoaded', () => {
+      const dateInput = document.getElementById('resDate');
+      if (dateInput) {
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.min = today;
+        dateInput.value = today;
+      }
+    });
+
+    document.getElementById('reservationForm')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('resSubmitBtn');
+      btn.disabled = true;
+      btn.textContent = '⏳ Booking...';
+
+      try {
+        const data = await apiCall('/reservations', {
+          method: 'POST',
+          body: JSON.stringify({
+            customerName: document.getElementById('resName').value.trim(),
+            customerPhone: document.getElementById('resPhone').value.trim(),
+            customerEmail: document.getElementById('resEmail').value.trim(),
+            date: document.getElementById('resDate').value,
+            time: document.getElementById('resTime').value,
+            guests: parseInt(document.getElementById('resGuests').value),
+            specialRequest: document.getElementById('resRequest').value.trim()
+          })
+        });
+
+        if (data.success) {
+          const msg = document.getElementById('resSuccessMsg');
+          if (msg) msg.textContent = `Table for ${data.data.guests} booked on ${new Date(data.data.date).toLocaleDateString('en-IN')} at ${data.data.time}. We'll confirm shortly!`;
+          document.getElementById('successModal')?.classList.add('active');
+        }
+      } catch (error) {
+        showToast(error.message || 'Booking failed. Try again.', '❌');
+      }
+
+      btn.disabled = false;
+      btn.textContent = '📅 Confirm Reservation';
+    });
+  </script>
+</body>
+</html>

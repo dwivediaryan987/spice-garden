@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login | Spice Garden</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <div class="admin-login-page">
+    <div class="admin-login-card">
+      <div class="logo">🌿</div>
+      <h1>Spice Garden</h1>
+      <p class="subtitle">Admin Dashboard Login</p>
+      
+      <div class="admin-error" id="loginError"></div>
+      
+      <form id="loginForm">
+        <input type="email" class="admin-input" id="loginEmail" placeholder="Email address" value="admin@spicegarden.com" required>
+        <input type="password" class="admin-input" id="loginPassword" placeholder="Password" value="admin123" required>
+        <button type="submit" class="admin-btn" id="loginBtn">Sign In</button>
+      </form>
+      
+      <p style="text-align: center; margin-top: 20px; color: var(--admin-muted); font-size: 0.8rem;">
+        Default: admin@spicegarden.com / admin123
+      </p>
+    </div>
+  </div>
+
+  <script>
+    // Check if already logged in
+    const token = localStorage.getItem('sg_admin_token');
+    if (token) window.location.href = '/admin/dashboard.html';
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('loginBtn');
+      const error = document.getElementById('loginError');
+      
+      btn.disabled = true;
+      btn.textContent = 'Signing in...';
+      error.style.display = 'none';
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: document.getElementById('loginEmail').value,
+            password: document.getElementById('loginPassword').value
+          })
+        });
+        
+        const data = await res.json();
+        
+        if (data.success) {
+          localStorage.setItem('sg_admin_token', data.token);
+          localStorage.setItem('sg_admin_user', JSON.stringify(data.user));
+          window.location.href = '/admin/dashboard.html';
+        } else {
+          error.textContent = data.message || 'Login failed';
+          error.style.display = 'block';
+        }
+      } catch (err) {
+        error.textContent = 'Server not reachable. Make sure it\'s running.';
+        error.style.display = 'block';
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'Sign In';
+    });
+  </script>
+</body>
+</html>

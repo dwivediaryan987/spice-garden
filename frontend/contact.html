@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Get in touch with Spice Garden. Find our location, hours, phone number, and send us a message.">
+  <title>Contact | Spice Garden</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+</head>
+<body>
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-logo"><span class="nav-logo-icon">🌿</span><span class="nav-logo-text">Spice <span>Garden</span></span></a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/" class="nav-link">Home</a></li>
+        <li><a href="/menu.html" class="nav-link">Menu</a></li>
+        <li><a href="/order.html" class="nav-link">Order Online</a></li>
+        <li><a href="/reservation.html" class="nav-link">Book Table</a></li>
+        <li><a href="/about.html" class="nav-link">About</a></li>
+        <li><a href="/contact.html" class="nav-link active">Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="/order.html" class="nav-cart" id="cartIcon">🛒<span class="cart-count" id="cartCount">0</span></a>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <div class="container">
+      <span class="section-subtitle">We'd Love to Hear From You</span>
+      <h1 class="section-title">Contact Us</h1>
+      <p class="section-desc">Questions, feedback, or catering inquiries — reach out anytime</p>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="contact-grid animate-on-scroll">
+        <!-- Contact Info -->
+        <div>
+          <h2 style="font-family: var(--font-heading); margin-bottom: 25px; font-size: 1.5rem;">Get in Touch</h2>
+          <div class="contact-info-cards">
+            <div class="contact-info-card">
+              <div class="contact-info-icon">📍</div>
+              <div>
+                <div class="contact-info-title">Our Location</div>
+                <div class="contact-info-text">42 Spice Lane, Food Street<br>New Delhi - 110001, India</div>
+              </div>
+            </div>
+            <div class="contact-info-card">
+              <div class="contact-info-icon">📞</div>
+              <div>
+                <div class="contact-info-title">Call Us</div>
+                <div class="contact-info-text">+91 98765 43210<br>+91 11 2345 6789</div>
+              </div>
+            </div>
+            <div class="contact-info-card">
+              <div class="contact-info-icon">✉️</div>
+              <div>
+                <div class="contact-info-title">Email Us</div>
+                <div class="contact-info-text">hello@spicegarden.com<br>catering@spicegarden.com</div>
+              </div>
+            </div>
+            <div class="contact-info-card">
+              <div class="contact-info-icon">🕐</div>
+              <div>
+                <div class="contact-info-title">Opening Hours</div>
+                <div class="contact-info-text">
+                  Mon - Fri: 11:00 AM - 11:00 PM<br>
+                  Sat - Sun: 10:00 AM - 11:30 PM
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Map -->
+          <div class="contact-map">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3501.6432570257746!2d77.20659!3d28.632425!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cfd37b741d057%3A0xcdee88e47393c3f1!2sConnaught%20Place%2C%20New%20Delhi!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" allowfullscreen="" loading="lazy"></iframe>
+          </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="contact-form">
+          <h2 style="font-family: var(--font-heading); margin-bottom: 25px; font-size: 1.5rem;">Send a Message</h2>
+          <form id="contactForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Your Name *</label>
+                <input type="text" class="form-input" id="contactName" placeholder="Full name" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone</label>
+                <input type="tel" class="form-input" id="contactPhone" placeholder="+91 98765 43210">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email *</label>
+              <input type="email" class="form-input" id="contactEmail" placeholder="you@email.com" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Subject</label>
+              <select class="form-input" id="contactSubject">
+                <option value="general">General Inquiry</option>
+                <option value="feedback">Feedback</option>
+                <option value="catering">Catering Request</option>
+                <option value="complaint">Complaint</option>
+                <option value="partnership">Partnership</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Message *</label>
+              <textarea class="form-input" id="contactMessage" placeholder="Tell us what's on your mind..." rows="5" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; justify-content: center;">
+              ✉️ Send Message
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <span>© 2024 Spice Garden. All rights reserved.</span>
+        <span>Made with 🧡 in India</span>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast"><span class="toast-icon">✅</span><span class="toast-message" id="toastMessage"></span></div>
+
+  <script src="js/main.js"></script>
+  <script>
+    document.getElementById('contactForm')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      showToast('Message sent successfully! We\'ll get back to you soon.', '✅');
+      e.target.reset();
+    });
+  </script>
+</body>
+</html>

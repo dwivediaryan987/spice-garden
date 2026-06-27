@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reservations | Spice Garden Admin</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-logo"><span>🌿</span><span>Spice Garden</span></div>
+      <nav class="sidebar-nav">
+        <a href="/admin/dashboard.html" class="sidebar-link" data-page="dashboard"><span class="icon">📊</span> Dashboard</a>
+        <a href="/admin/menu-manage.html" class="sidebar-link" data-page="menu"><span class="icon">🍽️</span> Menu Items</a>
+        <a href="/admin/orders.html" class="sidebar-link" data-page="orders"><span class="icon">📦</span> Orders</a>
+        <a href="/admin/reservations.html" class="sidebar-link" data-page="reservations"><span class="icon">📅</span> Reservations</a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-user"><div class="sidebar-user-avatar">A</div><div><div class="sidebar-user-name" id="sidebarUserName">Admin</div><div class="sidebar-user-role">Administrator</div></div></div>
+        <button id="logoutBtn">🚪 Logout</button>
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-header">
+        <h1>📅 Reservation Management</h1>
+        <select class="status-select" id="resFilter" onchange="filterReservations()">
+          <option value="">All</option>
+          <option value="pending">Pending</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="cancelled">Cancelled</option>
+          <option value="completed">Completed</option>
+        </select>
+      </div>
+
+      <div class="admin-card">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Email</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Guests</th>
+              <th>Special Request</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="resTableBody">
+            <tr><td colspan="9" class="admin-empty"><span class="admin-empty-icon">📅</span>Loading reservations...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    if (!checkAuth()) throw new Error('Not authenticated');
+    initSidebar('reservations');
+
+    let allReservations = [];
+
+    async function loadReservations() {
+      try {
+        const data = await adminApi('/reservations');
+        if (data.success) {
+          allReservations = data.data;
+          renderReservations(allReservations);
+        }
+      } catch (e) {
+        document.getElementById('resTableBody').innerHTML = '<tr><td colspan="9" class="admin-empty">Failed to load</td></tr>';
+      }
+    }
+
+    function renderReservations(reservations) {
+      const tbody = document.getElementById('resTableBody');
+      if (reservations.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" class="admin-empty"><span class="admin-empty-icon">📅</span>No reservations found</td></tr>';
+        return;
+      }
+      tbody.innerHTML = reservations.map(r => `
+        <tr>
+          <td><strong>${r.customerName}</strong></td>
+          <td>${r.customerPhone}</td>
+          <td>${r.customerEmail || '—'}</td>
+          <td>${formatDate(r.date)}</td>
+          <td>${r.time}</td>
+          <td>${r.guests}</td>
+          <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${r.specialRequest || ''}">${r.specialRequest || '—'}</td>
+          <td>
+            <select class="status-select" onchange="updateResStatus('${r._id}', this.value)">
+              <option value="pending" ${r.status === 'pending' ? 'selected' : ''}>Pending</option>
+              <option value="confirmed" ${r.status === 'confirmed' ? 'selected' : ''}>Confirmed</option>
+              <option value="completed" ${r.status === 'completed' ? 'selected' : ''}>Completed</option>
+              <option value="cancelled" ${r.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+            </select>
+          </td>
+          <td>
+            <button class="action-btn delete" onclick="deleteRes('${r._id}')">🗑️</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function filterReservations() {
+      const status = document.getElementById('resFilter').value;
+      const filtered = status ? allReservations.filter(r => r.status === status) : allReservations;
+      renderReservations(filtered);
+    }
+
+    async function updateResStatus(id, status) {
+      try {
+        await adminApi(`/reservations/${id}`, {
+          method: 'PUT',
+          body: JSON.stringify({ status })
+        });
+      } catch (e) {
+        alert('Failed: ' + e.message);
+        loadReservations();
+      }
+    }
+
+    async function deleteRes(id) {
+      if (!confirm('Delete this reservation?')) return;
+      try {
+        await adminApi(`/reservations/${id}`, { method: 'DELETE' });
+        loadReservations();
+      } catch (e) { alert(e.message); }
+    }
+
+    loadReservations();
+  </script>
+</body>
+</html>

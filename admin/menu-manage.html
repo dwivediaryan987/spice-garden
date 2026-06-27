@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menu Management | Spice Garden Admin</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-logo"><span>🌿</span><span>Spice Garden</span></div>
+      <nav class="sidebar-nav">
+        <a href="/admin/dashboard.html" class="sidebar-link" data-page="dashboard"><span class="icon">📊</span> Dashboard</a>
+        <a href="/admin/menu-manage.html" class="sidebar-link" data-page="menu"><span class="icon">🍽️</span> Menu Items</a>
+        <a href="/admin/orders.html" class="sidebar-link" data-page="orders"><span class="icon">📦</span> Orders</a>
+        <a href="/admin/reservations.html" class="sidebar-link" data-page="reservations"><span class="icon">📅</span> Reservations</a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-user"><div class="sidebar-user-avatar">A</div><div><div class="sidebar-user-name" id="sidebarUserName">Admin</div><div class="sidebar-user-role">Administrator</div></div></div>
+        <button id="logoutBtn">🚪 Logout</button>
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-header">
+        <h1>🍽️ Menu Management</h1>
+        <button class="admin-btn" style="width:auto; padding:10px 20px;" onclick="openAddModal()">+ Add Item</button>
+      </div>
+
+      <!-- Filter Tabs -->
+      <div style="display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;">
+        <button class="toggle-chip active" data-cat="all" onclick="filterCategory('all', this)">All</button>
+        <button class="toggle-chip" data-cat="North Indian" onclick="filterCategory('North Indian', this)">North Indian</button>
+        <button class="toggle-chip" data-cat="South Indian" onclick="filterCategory('South Indian', this)">South Indian</button>
+        <button class="toggle-chip" data-cat="Chinese" onclick="filterCategory('Chinese', this)">Chinese</button>
+        <button class="toggle-chip" data-cat="Continental" onclick="filterCategory('Continental', this)">Continental</button>
+        <button class="toggle-chip" data-cat="Starters" onclick="filterCategory('Starters', this)">Starters</button>
+        <button class="toggle-chip" data-cat="Beverages" onclick="filterCategory('Beverages', this)">Beverages</button>
+        <button class="toggle-chip" data-cat="Desserts" onclick="filterCategory('Desserts', this)">Desserts</button>
+      </div>
+
+      <div class="admin-card">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Bestseller</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="menuTableBody">
+            <tr><td colspan="7" class="admin-empty"><span class="admin-empty-icon">🍽️</span>Loading menu items...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add/Edit Modal -->
+  <div class="admin-modal-overlay" id="menuModal">
+    <div class="admin-modal">
+      <h2 id="modalTitle">Add Menu Item <button class="modal-close" onclick="closeModal()">✕</button></h2>
+      <form id="menuForm" enctype="multipart/form-data">
+        <input type="hidden" id="editItemId">
+        <div class="admin-form-group">
+          <label>Item Name *</label>
+          <input type="text" class="admin-input" id="itemName" placeholder="e.g., Butter Chicken" required>
+        </div>
+        <div class="admin-form-group">
+          <label>Description *</label>
+          <textarea class="admin-input" id="itemDesc" placeholder="Short description..." rows="3" required style="resize:vertical;"></textarea>
+        </div>
+        <div class="admin-form-row">
+          <div class="admin-form-group">
+            <label>Price (₹) *</label>
+            <input type="number" class="admin-input" id="itemPrice" placeholder="299" min="1" required>
+          </div>
+          <div class="admin-form-group">
+            <label>Category *</label>
+            <select id="itemCategory" class="admin-input" required>
+              <option value="">Select</option>
+              <option value="North Indian">North Indian</option>
+              <option value="South Indian">South Indian</option>
+              <option value="Chinese">Chinese</option>
+              <option value="Continental">Continental</option>
+              <option value="Starters">Starters</option>
+              <option value="Beverages">Beverages</option>
+              <option value="Desserts">Desserts</option>
+            </select>
+          </div>
+        </div>
+        <div class="admin-form-row">
+          <div class="admin-form-group">
+            <label>Spice Level</label>
+            <select id="itemSpice" class="admin-input">
+              <option value="Mild">Mild</option>
+              <option value="Medium" selected>Medium</option>
+              <option value="Hot">Hot</option>
+            </select>
+          </div>
+          <div class="admin-form-group">
+            <label>Image</label>
+            <input type="file" class="admin-input" id="itemImage" accept="image/*" style="padding: 8px;">
+          </div>
+        </div>
+        <div class="admin-form-group">
+          <label>Options</label>
+          <div class="toggle-group">
+            <button type="button" class="toggle-chip active" id="vegToggle" onclick="this.classList.toggle('active')">🟢 Vegetarian</button>
+            <button type="button" class="toggle-chip" id="availableToggle" onclick="this.classList.toggle('active')">✅ Available</button>
+            <button type="button" class="toggle-chip" id="bestsellerToggle" onclick="this.classList.toggle('active')">⭐ Bestseller</button>
+          </div>
+        </div>
+        <button type="submit" class="admin-btn" id="saveBtn">Save Item</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    if (!checkAuth()) throw new Error('Not authenticated');
+    initSidebar('menu');
+
+    let allItems = [];
+    let currentFilter = 'all';
+
+    async function loadMenuItems() {
+      try {
+        const data = await adminApi('/menu');
+        if (data.success) {
+          allItems = data.data;
+          renderTable(allItems);
+        }
+      } catch (e) {
+        document.getElementById('menuTableBody').innerHTML = '<tr><td colspan="7" class="admin-empty">Failed to load</td></tr>';
+      }
+    }
+
+    function renderTable(items) {
+      const tbody = document.getElementById('menuTableBody');
+      if (items.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="admin-empty"><span class="admin-empty-icon">🍽️</span>No items found</td></tr>';
+        return;
+      }
+      tbody.innerHTML = items.map(item => `
+        <tr>
+          <td><strong>${item.name}</strong></td>
+          <td>${item.category}</td>
+          <td>₹${item.price}</td>
+          <td>${item.isVeg ? '🟢 Veg' : '🔴 Non-Veg'}</td>
+          <td><span class="status-badge ${item.isAvailable ? 'confirmed' : 'cancelled'}">${item.isAvailable ? 'Available' : 'Unavailable'}</span></td>
+          <td>${item.isBestseller ? '⭐' : '—'}</td>
+          <td>
+            <div class="action-btn-group">
+              <button class="action-btn edit" onclick='editItem(${JSON.stringify(item).replace(/'/g, "\\'")})'>✏️</button>
+              <button class="action-btn delete" onclick="deleteItem('${item._id}')">🗑️</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function filterCategory(cat, btn) {
+      currentFilter = cat;
+      document.querySelectorAll('.toggle-chip[data-cat]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filtered = cat === 'all' ? allItems : allItems.filter(i => i.category === cat);
+      renderTable(filtered);
+    }
+
+    function openAddModal() {
+      document.getElementById('modalTitle').innerHTML = 'Add Menu Item <button class="modal-close" onclick="closeModal()">✕</button>';
+      document.getElementById('menuForm').reset();
+      document.getElementById('editItemId').value = '';
+      document.getElementById('vegToggle').classList.add('active');
+      document.getElementById('availableToggle').classList.add('active');
+      document.getElementById('bestsellerToggle').classList.remove('active');
+      document.getElementById('menuModal').classList.add('active');
+    }
+
+    function editItem(item) {
+      document.getElementById('modalTitle').innerHTML = 'Edit Menu Item <button class="modal-close" onclick="closeModal()">✕</button>';
+      document.getElementById('editItemId').value = item._id;
+      document.getElementById('itemName').value = item.name;
+      document.getElementById('itemDesc').value = item.description;
+      document.getElementById('itemPrice').value = item.price;
+      document.getElementById('itemCategory').value = item.category;
+      document.getElementById('itemSpice').value = item.spiceLevel;
+      
+      document.getElementById('vegToggle').classList.toggle('active', item.isVeg);
+      document.getElementById('availableToggle').classList.toggle('active', item.isAvailable);
+      document.getElementById('bestsellerToggle').classList.toggle('active', item.isBestseller);
+      
+      document.getElementById('menuModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('menuModal').classList.remove('active');
+    }
+
+    document.getElementById('menuForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('saveBtn');
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+
+      const id = document.getElementById('editItemId').value;
+      const formData = new FormData();
+      formData.append('name', document.getElementById('itemName').value);
+      formData.append('description', document.getElementById('itemDesc').value);
+      formData.append('price', document.getElementById('itemPrice').value);
+      formData.append('category', document.getElementById('itemCategory').value);
+      formData.append('spiceLevel', document.getElementById('itemSpice').value);
+      formData.append('isVeg', document.getElementById('vegToggle').classList.contains('active'));
+      formData.append('isAvailable', document.getElementById('availableToggle').classList.contains('active'));
+      formData.append('isBestseller', document.getElementById('bestsellerToggle').classList.contains('active'));
+
+      const imageFile = document.getElementById('itemImage').files[0];
+      if (imageFile) formData.append('image', imageFile);
+
+      try {
+        const endpoint = id ? `/menu/${id}` : '/menu';
+        const method = id ? 'PUT' : 'POST';
+        await adminApi(endpoint, { method, body: formData });
+        closeModal();
+        loadMenuItems();
+      } catch (err) {
+        alert(err.message);
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'Save Item';
+    });
+
+    async function deleteItem(id) {
+      if (!confirm('Delete this item?')) return;
+      try {
+        await adminApi(`/menu/${id}`, { method: 'DELETE' });
+        loadMenuItems();
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    loadMenuItems();
+  </script>
+</body>
+</html>
