@@ -42,7 +42,10 @@
       error.style.display = 'none';
 
       try {
-        const res = await fetch('/api/auth/login', {
+        const API_HOST = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+          ? ''
+          : 'https://spice-garden-api.onrender.com';
+        const res = await fetch(API_HOST + '/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

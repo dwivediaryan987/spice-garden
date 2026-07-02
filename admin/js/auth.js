@@ -2,7 +2,10 @@
 // SPICE GARDEN — Admin Auth Utilities
 // =========================================
 
-const ADMIN_API = '/api';
+// Auto-detect: use relative path locally, Render URL in production
+const ADMIN_API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? '/api'
+  : 'https://spice-garden-api.onrender.com/api';
 
 function getToken() {
   return localStorage.getItem('sg_admin_token');

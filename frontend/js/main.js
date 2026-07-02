@@ -2,7 +2,10 @@
 // SPICE GARDEN — Main Utilities
 // =========================================
 
-const API_BASE = '/api';
+// Auto-detect: use relative path locally, Render URL in production
+const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? '/api'
+  : 'https://spice-garden-api.onrender.com/api';
 
 // ---- Cart Management ----
 const Cart = {
@@ -165,8 +168,9 @@ function createMenuCard(item) {
     return `<span class="spice-dot ${isActive ? 'active' : ''}"></span>`;
   }).join('');
 
+  const imageBase = API_BASE.replace('/api', '');
   const imageContent = item.image && item.image !== 'default-food.jpg'
-    ? `<img src="/uploads/${item.image}" alt="${item.name}" loading="lazy">`
+    ? `<img src="${imageBase}/uploads/${item.image}" alt="${item.name}" loading="lazy">`
     : getCategoryEmoji(item.category);
 
   return `
