@@ -104,8 +104,19 @@
             </select>
           </div>
           <div class="admin-form-group">
-            <label>Image</label>
-            <input type="file" class="admin-input" id="itemImage" accept="image/*" style="padding: 8px;">
+            <label>Image Upload</label>
+            <div style="display: flex; gap: 10px; margin-bottom: 10px; font-size: 0.9rem; color: #999;">
+              <span style="flex: 1;">Upload from computer</span>
+              <span style="flex: 1;">OR paste image URL</span>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <input type="file" class="admin-input" id="itemImage" accept="image/*" style="padding: 8px;" title="Upload image from computer">
+              <input type="url" class="admin-input" id="itemImageUrl" placeholder="https://images.unsplash.com/..." style="padding: 8px;" title="Or paste image URL">
+            </div>
+            <div style="font-size: 0.85rem; color: #666; margin-top: 8px; padding: 8px; background: #f5f5f5; border-radius: 4px;">
+              💡 <strong>Tip:</strong> Use URLs from <a href="https://unsplash.com" target="_blank" style="color: #E85D04; text-decoration: underline;">Unsplash</a>, 
+              <a href="https://www.pexels.com" target="_blank" style="color: #E85D04; text-decoration: underline;">Pexels</a>, or Google Images
+            </div>
           </div>
         </div>
         <div class="admin-form-group">
@@ -177,6 +188,7 @@
       document.getElementById('modalTitle').innerHTML = 'Add Menu Item <button class="modal-close" onclick="closeModal()">✕</button>';
       document.getElementById('menuForm').reset();
       document.getElementById('editItemId').value = '';
+      document.getElementById('itemImageUrl').value = ''; // Clear URL field
       document.getElementById('vegToggle').classList.add('active');
       document.getElementById('availableToggle').classList.add('active');
       document.getElementById('bestsellerToggle').classList.remove('active');
@@ -191,6 +203,7 @@
       document.getElementById('itemPrice').value = item.price;
       document.getElementById('itemCategory').value = item.category;
       document.getElementById('itemSpice').value = item.spiceLevel;
+      document.getElementById('itemImageUrl').value = item.image || ''; // Pre-fill image URL
       
       document.getElementById('vegToggle').classList.toggle('active', item.isVeg);
       document.getElementById('availableToggle').classList.toggle('active', item.isAvailable);
@@ -210,6 +223,17 @@
       btn.textContent = 'Saving...';
 
       const id = document.getElementById('editItemId').value;
+      const imageFile = document.getElementById('itemImage').files[0];
+      const imageUrl = document.getElementById('itemImageUrl').value.trim();
+
+      // Validate: at least one image source
+      if (!imageFile && !imageUrl) {
+        alert('❌ Please either upload an image or provide an image URL');
+        btn.disabled = false;
+        btn.textContent = 'Save Item';
+        return;
+      }
+
       const formData = new FormData();
       formData.append('name', document.getElementById('itemName').value);
       formData.append('description', document.getElementById('itemDesc').value);
@@ -220,17 +244,27 @@
       formData.append('isAvailable', document.getElementById('availableToggle').classList.contains('active'));
       formData.append('isBestseller', document.getElementById('bestsellerToggle').classList.contains('active'));
 
-      const imageFile = document.getElementById('itemImage').files[0];
-      if (imageFile) formData.append('image', imageFile);
+      // Handle image: prefer file, fallback to URL
+      if (imageFile) {
+        formData.append('image', imageFile);
+      } else if (imageUrl) {
+        formData.append('imageUrl', imageUrl);
+      }
 
       try {
         const endpoint = id ? `/menu/${id}` : '/menu';
         const method = id ? 'PUT' : 'POST';
-        await adminApi(endpoint, { method, body: formData });
-        closeModal();
-        loadMenuItems();
+        const response = await adminApi(endpoint, { method, body: formData });
+        
+        if (response.success) {
+          alert('✅ Item saved successfully!');
+          closeModal();
+          loadMenuItems();
+        } else {
+          alert('❌ Error: ' + (response.message || 'Failed to save'));
+        }
       } catch (err) {
-        alert(err.message);
+        alert('❌ Error: ' + err.message);
       }
 
       btn.disabled = false;

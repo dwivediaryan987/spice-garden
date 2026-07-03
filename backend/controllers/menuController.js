@@ -40,8 +40,10 @@ exports.addItem = async (req, res) => {
   try {
     const itemData = { ...req.body };
 
-    // Handle image upload
-    if (req.file) {
+    // Handle image: URL takes priority, then file upload
+    if (req.body.imageUrl && req.body.imageUrl.trim()) {
+      itemData.image = req.body.imageUrl.trim();
+    } else if (req.file) {
       itemData.image = req.file.filename;
     }
 
@@ -63,11 +65,13 @@ exports.updateItem = async (req, res) => {
   try {
     const itemData = { ...req.body };
 
-    // Handle new image upload
-    if (req.file) {
-      // Delete old image if it exists
+    // Handle image: URL takes priority, then file upload
+    if (req.body.imageUrl && req.body.imageUrl.trim()) {
+      itemData.image = req.body.imageUrl.trim();
+    } else if (req.file) {
+      // Delete old image if it exists and is a local file
       const oldItem = await MenuItem.findById(req.params.id);
-      if (oldItem && oldItem.image && oldItem.image !== 'default-food.jpg') {
+      if (oldItem && oldItem.image && !oldItem.image.startsWith('http')) {
         const oldImagePath = path.join(__dirname, '..', 'uploads', oldItem.image);
         if (fs.existsSync(oldImagePath)) {
           fs.unlinkSync(oldImagePath);
