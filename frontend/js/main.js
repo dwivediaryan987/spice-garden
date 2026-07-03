@@ -165,20 +165,22 @@ function createMenuCard(item) {
     return `<span class="spice-dot ${isActive ? 'active' : ''}"></span>`;
   }).join('');
 
-  // Handle image: prefer URLs, fallback to uploads, then emoji
+  // Handle image: prefer uploaded files, fallback to category emoji
   let imageContent = '';
   
   if (item.image && item.image !== 'default-food.jpg') {
-    const isUrl = item.image && (item.image.startsWith('http') || item.image.startsWith('blob'));
+    // Check if it's a URL or a filename
+    const isUrl = item.image.startsWith('http') || item.image.startsWith('blob');
     const imgSrc = isUrl ? item.image : `/uploads/${item.image}`;
-    imageContent = `<img src="${imgSrc}" alt="${item.name}" loading="lazy" onerror="this.style.display='none'">`;
-  }
-  
-  // Always add emoji as fallback
-  if (!imageContent) {
-    imageContent = getCategoryEmoji(item.category);
+    
+    // Add image with fallback emoji
+    const categoryEmoji = getCategoryEmoji(item.category);
+    imageContent = `
+      <img src="${imgSrc}" alt="${item.name}" loading="lazy" onerror="this.parentElement.textContent='${categoryEmoji}'" style="width:100%; height:100%; object-fit:cover;">
+    `;
   } else {
-    imageContent += `<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 4rem; opacity: 0;">${getCategoryEmoji(item.category)}</div>`;
+    // No image, use emoji
+    imageContent = `<span style="font-size: 4rem;">${getCategoryEmoji(item.category)}</span>`;
   }
 
   return `
