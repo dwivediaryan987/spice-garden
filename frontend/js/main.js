@@ -165,9 +165,21 @@ function createMenuCard(item) {
     return `<span class="spice-dot ${isActive ? 'active' : ''}"></span>`;
   }).join('');
 
-  const imageContent = item.image && item.image !== 'default-food.jpg'
-    ? `<img src="/uploads/${item.image}" alt="${item.name}" loading="lazy">`
-    : getCategoryEmoji(item.category);
+  // Handle image: prefer URLs, fallback to uploads, then emoji
+  let imageContent = '';
+  
+  if (item.image && item.image !== 'default-food.jpg') {
+    const isUrl = item.image && (item.image.startsWith('http') || item.image.startsWith('blob'));
+    const imgSrc = isUrl ? item.image : `/uploads/${item.image}`;
+    imageContent = `<img src="${imgSrc}" alt="${item.name}" loading="lazy" onerror="this.style.display='none'">`;
+  }
+  
+  // Always add emoji as fallback
+  if (!imageContent) {
+    imageContent = getCategoryEmoji(item.category);
+  } else {
+    imageContent += `<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 4rem; opacity: 0;">${getCategoryEmoji(item.category)}</div>`;
+  }
 
   return `
     <div class="menu-card" data-id="${item._id}">
